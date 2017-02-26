@@ -10,7 +10,7 @@ public class Context {
 	private List<Enemy> enemyList;
 	private List<String> console;
 
-	private Context() {
+	protected Context() {
 	}
 
 	public static Context getInstance() {

@@ -3,7 +3,6 @@ package com.ataybur.utils;
 import java.util.Optional;
 
 import com.ataybur.enums.LineTypes;
-import com.ataybur.pojo.base.Character;
 
 public class LineInfo {
 	private String[] parsedLine;
@@ -16,34 +15,12 @@ public class LineInfo {
 	}
 
 	public void putParsedLineIntoContext() throws InstantiationException, IllegalAccessException {
+		ContextHelper contextHelper = new ContextHelper();
 		if (parsedLine != null && lineTypes.isPresent()) {
-			switch (lineTypes.get()) {
-			case RANGE:
-				if (parsedLine.length == 1) {
-					ContextUtils.setRange(parsedLine[0]);
-				}
-				break;
-			case HP:
-				if (parsedLine.length == 2) {
-					ContextUtils.setCharacterPoint(parsedLine, Character::setHp);
-				}
-				break;
-			case ATTACK_POINT:
-				if (parsedLine.length == 2) {
-					ContextUtils.setCharacterPoint(parsedLine, Character::setAttackPoint);
-				}
-				break;
-			case ENEMY:
-				if (parsedLine.length == 1) {
-					ContextUtils.setEnemy(parsedLine[0]);
-				}
-				break;
-			case ENEMY_POSITION:
-				if (parsedLine.length == 2) {
-					ContextUtils.setEnemyPosition(parsedLine);
-				}
-				break;
-			}
+			lineTypes //
+					.get() //
+					.getSetter() //
+					.apply(contextHelper, parsedLine);
 		}
 	}
 }
