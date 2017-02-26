@@ -37,7 +37,7 @@ public class ContextUtils {
 			} else {
 				Optional<Enemy> optEnemy = enemyList //
 						.stream() //
-						.filter((enemy) -> characterType.equalsIgnoreCase(enemy.getSpecies())) //
+						.filter(enemy -> characterType.equalsIgnoreCase(enemy.getSpecies())) //
 						.findFirst();
 				boolean optEnemyIsPresent = optEnemy.isPresent();
 				if (!optEnemyIsPresent) {
