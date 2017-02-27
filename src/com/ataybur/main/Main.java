@@ -17,8 +17,6 @@ import com.ataybur.utils.LineInfo;
 import com.ataybur.utils.LineParser;
 
 public class Main {
-	private static Context context = Context.getInstance();
-
 	public static void main(String[] args) {
 		String fileNameOutput = null;
 		try {
