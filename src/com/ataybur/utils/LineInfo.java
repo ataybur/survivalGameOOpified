@@ -14,13 +14,17 @@ public class LineInfo {
 		this.lineTypes = lineTypes;
 	}
 
-	public void putParsedLineIntoContext() throws InstantiationException, IllegalAccessException {
-		ContextHelper contextHelper = new ContextHelper();
+	public ContextFiller getContextFiller(){
+		return new ContextFiller(this);
+	}
+	
+	public ContextHelper putParsedLineIntoContext(ContextHelper contextHelper) {
 		if (parsedLine != null && lineTypes.isPresent()) {
 			lineTypes //
 					.get() //
 					.getSetter() //
 					.apply(contextHelper, parsedLine);
 		}
+		return contextHelper;
 	}
 }

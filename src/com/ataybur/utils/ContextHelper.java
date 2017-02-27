@@ -27,9 +27,9 @@ public class ContextHelper extends Context {
 	}
 	
 	public ContextHelper setRange(String[] info) throws InstantiationException, IllegalAccessException {
-		Field field = Utils.getter(context.getField(), Field.class);
+		Field field = new PojoGetter<Field>(context.getField(), Field.class).get();
 		String rangeString = info[0];
-		Integer range = Utils.convertIntToString(rangeString);
+		Integer range = new IntegerConverter(rangeString).convert();
 		field.setRange(range);
 		context.setField(field);
 		return this;
@@ -45,12 +45,13 @@ public class ContextHelper extends Context {
 	
 	private <T extends com.ataybur.pojo.base.Character> ContextHelper setCharacterPoint(String[] characterInfo,
 			BiConsumer<T, Integer> setter) throws InstantiationException, IllegalAccessException {
-		List<Enemy> enemyList = Utils.getter(context.getEnemyList(), ArrayList.class);
+		
+		List<Enemy> enemyList = new PojoGetter<List>(context.getEnemyList(), ArrayList.class).get();
 		String characterType = characterInfo[0];
-		Integer point = Utils.convertIntToString(characterInfo[1]);
-		if (StringUtils.isNotEmpty(characterType)) {
+		Integer point = new IntegerConverter(characterInfo[1]).convert();
+		if (new StringChecker(characterType).isNotEmpty()) {
 			if (characterType.equalsIgnoreCase(Constants.HERO)) {
-				Hero hero = Utils.getter(context.getHero(), Hero.class);
+				Hero hero = new PojoGetter<Hero>(context.getHero(), Hero.class).get();
 				setter.accept((T) hero, point);
 				context.setHero(hero);
 			} else {
@@ -75,12 +76,12 @@ public class ContextHelper extends Context {
 	}
 
 	public ContextHelper setEnemyPosition(String[] characterInfo) throws InstantiationException, IllegalAccessException {
-		List<Enemy> enemyList = Utils.getter(context.getEnemyList(), ArrayList.class);
-		Field field = Utils.getter(context.getField(), Field.class);
-		SortedMap<Integer, Enemy> enemyMap = Utils.getter(field.getEnemyMap(), TreeMap.class);
+		List<Enemy> enemyList = new PojoGetter<List>(context.getEnemyList(), ArrayList.class).get();
+		Field field = new PojoGetter<Field>(context.getField(), Field.class).get();
+		SortedMap<Integer, Enemy> enemyMap = new PojoGetter<SortedMap>(field.getEnemyMap(), TreeMap.class).get();
 		String characterType = characterInfo[0];
-		Integer position = Utils.convertIntToString(characterInfo[1]);
-		if (StringUtils.isNotEmpty(characterType)) {
+		Integer position = new IntegerConverter(characterInfo[1]).convert();
+		if (new StringChecker(characterType).isNotEmpty()) {
 			Optional<Enemy> optEnemy = enemyList //
 					.stream() //
 					.filter((enemy) -> characterType.equalsIgnoreCase(enemy.getSpecies())) //
@@ -98,9 +99,9 @@ public class ContextHelper extends Context {
 	}
 
 	public ContextHelper setEnemy(String[] info) throws InstantiationException, IllegalAccessException {
-		List<Enemy> enemyList = Utils.getter(context.getEnemyList(), ArrayList.class);
+		List<Enemy> enemyList = new PojoGetter<List>(context.getEnemyList(), ArrayList.class).get();
 		String characterType = info[0];
-		if (StringUtils.isNotEmpty(characterType)) {
+		if (new StringChecker(characterType).isNotEmpty()) {
 			Optional<Enemy> optEnemy = enemyList //
 					.stream() //
 					.filter((enemy) -> characterType.equalsIgnoreCase(enemy.getSpecies())) //
@@ -119,17 +120,4 @@ public class ContextHelper extends Context {
 		return this;
 	}
 
-	public ContextHelper addToConsole(String str, Object... args) throws InstantiationException, IllegalAccessException {
-		List<String> console = Utils.getter(context.getConsole(), ArrayList.class);
-		String formattedMessage = String.format(str, args);
-		console.add(formattedMessage);
-		context.setConsole(console);
-		return this;
-	}
-
-	public ContextHelper printConsole() throws InstantiationException, IllegalAccessException {
-		List<String> console = Utils.getter(context.getConsole(), ArrayList.class);
-		console.forEach(System.out::println);
-		return this;
-	}
 }
