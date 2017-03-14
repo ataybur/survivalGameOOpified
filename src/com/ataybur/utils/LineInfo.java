@@ -1,30 +1,29 @@
 package com.ataybur.utils;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import com.ataybur.enums.LineTypes;
 
 public class LineInfo {
-	private String[] parsedLine;
-	private Optional<LineTypes> lineTypes;
+    private String[] parsedLine;
+    private Optional<LineTypes> lineTypes;
 
-	public LineInfo(String[] parsedLine, Optional<LineTypes> lineTypes) {
-		super();
-		this.parsedLine = parsedLine;
-		this.lineTypes = lineTypes;
-	}
+    public LineInfo(String[] parsedLine, Optional<LineTypes> lineTypes) {
+	super();
+	this.parsedLine = parsedLine;
+	this.lineTypes = lineTypes;
+    }
 
-	public ContextFiller getContextFiller(){
-		return new ContextFiller(this);
-	}
-	
-	public ContextHelper putParsedLineIntoContext(ContextHelper contextHelper) {
-		if (parsedLine != null && lineTypes.isPresent()) {
-			lineTypes //
-					.get() //
-					.getSetter() //
-					.apply(contextHelper, parsedLine);
-		}
-		return contextHelper;
-	}
+    public ContextHelper putParsedLineIntoContext(ContextHelper contextHelper) {
+	lineTypes.map(LineTypes::getSetter) //
+		.ifPresent(func -> func.apply(contextHelper, parsedLine));
+	return contextHelper;
+    }
+
+    @Override
+    public String toString() {
+	return "LineInfo [parsedLine=" + Arrays.toString(parsedLine) + ", lineTypes=" + lineTypes + "]";
+    }
+
 }

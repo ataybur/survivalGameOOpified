@@ -6,12 +6,13 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 public class FileReader {
-	private Stream<String> stream;
-	public FileReader(String fileName) throws IOException {
-		stream = Files.lines(Paths.get(fileName));
-	}
-	
-	public Stream<String> getStream() {
-		return stream;
-	}
+    private Stream<String> stream;
+
+    public FileReader(String fileName) throws IOException {
+	stream = Files.lines(Paths.get(fileName));
+    }
+
+    public Stream<String> getStream() {
+	return stream;
+    }
 }

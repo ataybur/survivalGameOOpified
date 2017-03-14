@@ -1,20 +1,20 @@
 package com.ataybur.lambda;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @FunctionalInterface
-public interface BiFunctionThrowing<T, U, R> extends BiFunction<T, U, R> {
+public interface FunctionThrowing<T, R> extends Function<T, R> {
     @Override
-    default R apply(T t, U u) {
+    default R apply(T t) {
 	try {
-	    return applyThrowing(t, u);
+	    return applyThrowing(t);
 	} catch (Exception e) {
 	    throwAsUnchecked(e);
 	}
 	return null;
     }
 
-    R applyThrowing(T t, U u) throws Exception;
+    R applyThrowing(T t) throws Exception;
 
     @SuppressWarnings("unchecked")
     static <E extends Throwable> void throwAsUnchecked(Exception exception) throws E {

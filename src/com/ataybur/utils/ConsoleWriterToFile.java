@@ -1,27 +1,25 @@
 package com.ataybur.utils;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import com.ataybur.pojo.Context;
 
 public class ConsoleWriterToFile extends WriterToFile {
-	private Optional<Context> context;
+    private Optional<Context> context;
 
-	public ConsoleWriterToFile() {
-		super();
-	}
+    public ConsoleWriterToFile(Optional<Context> context) {
+	super();
+	this.context = context;
+    }
 
-	public ConsoleWriterToFile setContext(Optional<Context> context) {
-		this.context = context;
-		return this;
-	}
-
-	@Override
-	public ConsoleWriterToFile prepareFile() {
-		if (context.isPresent()) {
-			this.messages = context.get().getConsole();
-		}
-		return this;
-	}
+    @Override
+    public ConsoleWriterToFile prepareFile() {
+	this.messages = context.map(Context::getConsole) //
+		.orElse(new ArrayList<String>());
+	this.fileName = context.map(Context::getOutputFileName) //
+		.orElse("output-file.txt");
+	return this;
+    }
 
 }
