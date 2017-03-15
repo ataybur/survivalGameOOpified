@@ -11,20 +11,20 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 import com.ataybur.main.App;
-import com.ataybur.utils.FileGetter;
 
 public class Gui extends JFrame {
 
     private static final long serialVersionUID = 5422603205441353041L;
 
+    private App app;
+
     public Gui() {
 	super("Survival Game");
+	app = new App();
 	setSize(900, 400);
 	setDefaultCloseOperation(EXIT_ON_CLOSE);
 	Container c = getContentPane();
 	c.setLayout(new FlowLayout());
-	FileGetter inputFile = new FileGetter();
-	FileGetter outputFile = new FileGetter();
 	JButton inputButton = new JButton("INPUT");
 	inputButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent ae) {
@@ -33,7 +33,7 @@ public class Gui extends JFrame {
 		int option = chooser.showOpenDialog(inputButton);
 		if (option == JFileChooser.APPROVE_OPTION) {
 		    File file = chooser.getSelectedFile();
-		    inputFile.setFile(file);
+		    app.load(file);
 		}
 	    }
 	});
@@ -48,7 +48,7 @@ public class Gui extends JFrame {
 		int option = chooser.showOpenDialog(inputButton);
 		if (option == JFileChooser.APPROVE_OPTION) {
 		    File file = chooser.getSelectedFile();
-		    outputFile.setFile(file);
+		    app.write(file);
 		}
 	    }
 	});
@@ -56,12 +56,12 @@ public class Gui extends JFrame {
 	JButton runButton = new JButton("RUN");
 	runButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent ae) {
-		new App(inputFile, outputFile).run();
+		app.run();
 	    }
 	});
 	c.add(inputButton);
-	c.add(outputButton);
 	c.add(runButton);
+	c.add(outputButton);
     }
 
 }

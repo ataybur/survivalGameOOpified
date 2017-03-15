@@ -13,7 +13,7 @@ import com.ataybur.pojo.Context;
 import com.ataybur.utils.ContextHelper;
 import com.ataybur.utils.LineInfo;
 
-public class LineInfoCollector implements Collector<LineInfo, ContextHelper, Optional<Context>>{
+public class LineInfoCollector implements Collector<LineInfo, ContextHelper, Optional<Context>> {
 
     @Override
     public BiConsumer<ContextHelper, LineInfo> accumulator() {
@@ -39,6 +39,5 @@ public class LineInfoCollector implements Collector<LineInfo, ContextHelper, Opt
     public Supplier<ContextHelper> supplier() {
 	return ContextHelper::new;
     }
-
 
 }

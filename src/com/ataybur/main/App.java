@@ -4,64 +4,61 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
-import com.ataybur.lambda.LineInfoCollector;
 import com.ataybur.lambda.FunctionThrowing;
+import com.ataybur.lambda.LineInfoCollector;
+import com.ataybur.lambda.RunnableThrowing;
 import com.ataybur.pojo.Context;
 import com.ataybur.utils.ConsoleWriterToFile;
-import com.ataybur.utils.ContextHelper;
 import com.ataybur.utils.ErrorWriterToFile;
-import com.ataybur.utils.FileGetter;
 import com.ataybur.utils.FileReader;
 import com.ataybur.utils.Game;
 import com.ataybur.utils.LineChecker;
 import com.ataybur.utils.LineParser;
-import com.ataybur.utils.WriterToFile;
 
 public class App {
-    private FileGetter inputFile;
-    private FileGetter outputFile;
+    private Optional<Context> context = Optional.ofNullable(Context.getInstance());
 
-    public App(FileGetter inputFile, FileGetter outputFile) {
+    public App() {
 	super();
-	this.inputFile = inputFile;
-	this.outputFile = outputFile;
     }
 
-    public void run() {
-	String fileNameInput = inputFile.getFile().getAbsolutePath();
-	String fileNameOutput = outputFile.getFile().getAbsolutePath() + File.separatorChar + "output.txt";
-	try {
-	    FunctionThrowing<Game, Optional<Context>> gameStartGame = Game::startGame;
-//	    FunctionThrowing<ConsoleWriterToFile, WriterToFile> consoleWriterToFileWrite = ConsoleWriterToFile::write;
-//	    ContextHelper contextHelper = new ContextHelper(fileNameOutput);
-	    // List<LineInfo> list =
-	   Optional<Context> context = new FileReader(fileNameInput) //
+    public void load(File inputFile) {
+	handleException(() -> {
+	    String fileNameInput = inputFile.getAbsolutePath();
+	    new FileReader(fileNameInput) //
 		    .getStream() //
 		    .map(LineChecker::new) //
 		    .map(LineChecker::parseForLineType) //
 		    .map(LineParser::parseLineToInfo) //
-		    // .collect(Collectors.toList());
 		    .collect(new LineInfoCollector());
-//		    .forEach(contextHelper::applyLineInfo);
-		    context.map(Game::new).map(gameStartGame);
-//		    .map(ConsoleWriterToFile::new) //
-//		    .map(ConsoleWriterToFile::prepareFile) //
-//		    .map(consoleWriterToFileWrite);
+	});
+    }
 
-	    // new Game(context).startGame();
-	     new ConsoleWriterToFile(context) //
-	     .setFileName(fileNameOutput) //
-	     .prepareFile() //
-	     .write();
-	} catch (RuntimeException | IOException e) {
+    public void run() {
+	FunctionThrowing<Game, Optional<Context>> gameStartGame = Game::startGame;
+	context.map(Game::new) //
+		.map(gameStartGame);
+    }
+
+    public void write(File outputFile) {
+	handleException(() -> {
+	    String fileNameOutput = outputFile.getAbsolutePath() + File.separatorChar + "output.txt";
+	    new ConsoleWriterToFile(context) //
+		    .setFileName(fileNameOutput) //
+		    .prepareFile() //
+		    .write();
+	});
+    }
+
+    private void handleException(RunnableThrowing runnable) {
+	try {
+	    runnable.run();
+	} catch (Exception e) {
 	    try {
-		// if (fileNameOutput == null) {
-		// fileNameOutput = Constants.ERROR_LOG;
-		// }
 		e.printStackTrace();
 		new ErrorWriterToFile() //
 			.setException(e) //
-			.setFileName(fileNameOutput) //
+			.setFileName(new File(".").getAbsolutePath()) //
 			.prepareFile() //
 			.write();
 	    } catch (IOException e1) {

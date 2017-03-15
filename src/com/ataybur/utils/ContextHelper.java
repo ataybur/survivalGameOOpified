@@ -64,11 +64,11 @@ public class ContextHelper extends Context {
 			.filter(enemy -> characterType.equalsIgnoreCase(enemy.getSpecies())) //
 			.findFirst();
 		boolean optEnemyIsPresent = optEnemy.isPresent();
-		optEnemy.orElse(new Enemy()) //
-			.setSpecies(characterType);
-		optEnemy.ifPresent(enemy -> setter.accept((T) enemy, point));
+		Enemy enemy = optEnemy.orElse(new Enemy());
+		enemy.setSpecies(characterType);
+		setter.accept((T) enemy, point);
 		if (!optEnemyIsPresent) {
-		    optEnemy.map(enemyList::add);
+		    enemyList.add(enemy);
 		}
 	    }
 	}
@@ -107,10 +107,10 @@ public class ContextHelper extends Context {
 		    .filter((enemy) -> characterType.equalsIgnoreCase(enemy.getSpecies())) //
 		    .findFirst();
 	    boolean optEnemyIsPresent = optEnemy.isPresent();
-	    optEnemy.orElse(new Enemy())//
-		    .setSpecies(characterType);
+	    Enemy enemy = optEnemy.orElse(new Enemy());
+	    enemy.setSpecies(characterType);
 	    if (!optEnemyIsPresent) {
-		optEnemy.map(enemyList::add);
+		enemyList.add(enemy);
 	    }
 	}
 	context.setEnemyList(enemyList);
