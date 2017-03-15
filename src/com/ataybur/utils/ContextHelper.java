@@ -18,13 +18,12 @@ import com.ataybur.pojo.base.Character;
 public class ContextHelper extends Context {
     private Context context;
 
-    public ContextHelper(String outputFileName) {
+    public ContextHelper() {
 	this.context = super.getInstance();
-	this.context.setOutputFileName(outputFileName);
     }
 
-    public Context toInstance() {
-	return context;
+    public Optional<Context> toInstance() {
+	return Optional.of(context);
     }
 
     public ContextHelper applyLineInfo(LineInfo lineInfo) {
@@ -65,14 +64,11 @@ public class ContextHelper extends Context {
 			.filter(enemy -> characterType.equalsIgnoreCase(enemy.getSpecies())) //
 			.findFirst();
 		boolean optEnemyIsPresent = optEnemy.isPresent();
+		optEnemy.orElse(new Enemy()) //
+			.setSpecies(characterType);
+		optEnemy.ifPresent(enemy -> setter.accept((T) enemy, point));
 		if (!optEnemyIsPresent) {
-		    optEnemy = Optional.of(new Enemy());
-		}
-		Enemy enemy = optEnemy.get();
-		enemy.setSpecies(characterType);
-		setter.accept((T) enemy, point);
-		if (!optEnemyIsPresent) {
-		    enemyList.add(optEnemy.get());
+		    optEnemy.map(enemyList::add);
 		}
 	    }
 	}
@@ -88,16 +84,14 @@ public class ContextHelper extends Context {
 	String characterType = characterInfo[0];
 	Integer position = new IntegerConverter(characterInfo[1]).convert();
 	if (new StringChecker(characterType).isNotEmpty()) {
-	    Optional<Enemy> optEnemy = enemyList //
+	    Enemy enemy = enemyList //
 		    .stream() //
-		    .filter((enemy) -> characterType.equalsIgnoreCase(enemy.getSpecies())) //
-		    .findFirst();
-	    boolean optEnemyIsPresent = optEnemy.isPresent();
-	    if (!optEnemyIsPresent) {
-		String formattedMessage = String.format(MessageConstants.MESSAGE_6, characterType);
-		throw new RuntimeException(formattedMessage);
-	    }
-	    Enemy enemy = optEnemy.get();
+		    .filter((e) -> characterType.equalsIgnoreCase(e.getSpecies())) //
+		    .findFirst() //
+		    .orElseThrow(() -> {
+			String formattedMessage = String.format(MessageConstants.MESSAGE_6, characterType);
+			return new RuntimeException(formattedMessage);
+		    });
 	    enemyMap.put(position, enemy);
 	}
 	field.setEnemyMap(enemyMap);
@@ -113,13 +107,10 @@ public class ContextHelper extends Context {
 		    .filter((enemy) -> characterType.equalsIgnoreCase(enemy.getSpecies())) //
 		    .findFirst();
 	    boolean optEnemyIsPresent = optEnemy.isPresent();
+	    optEnemy.orElse(new Enemy())//
+		    .setSpecies(characterType);
 	    if (!optEnemyIsPresent) {
-		optEnemy = Optional.of(new Enemy());
-	    }
-	    Enemy enemy = optEnemy.get();
-	    enemy.setSpecies(characterType);
-	    if (!optEnemyIsPresent) {
-		enemyList.add(enemy);
+		optEnemy.map(enemyList::add);
 	    }
 	}
 	context.setEnemyList(enemyList);

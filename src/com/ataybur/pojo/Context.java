@@ -5,7 +5,6 @@ import java.util.List;
 public class Context {
     private static Context context = new Context();
 
-    private String outputFileName;
     private Hero hero;
     private Field field;
     private List<Enemy> enemyList;
@@ -48,14 +47,6 @@ public class Context {
 
     public void setConsole(List<String> console) {
 	this.console = console;
-    }
-
-    public String getOutputFileName() {
-	return outputFileName;
-    }
-
-    public void setOutputFileName(String outputFileName) {
-	this.outputFileName = outputFileName;
     }
 
     @Override

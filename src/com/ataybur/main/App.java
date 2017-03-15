@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.ataybur.lambda.LineInfoCollector;
 import com.ataybur.lambda.FunctionThrowing;
 import com.ataybur.pojo.Context;
 import com.ataybur.utils.ConsoleWriterToFile;
@@ -31,25 +32,27 @@ public class App {
 	String fileNameOutput = outputFile.getFile().getAbsolutePath() + File.separatorChar + "output.txt";
 	try {
 	    FunctionThrowing<Game, Optional<Context>> gameStartGame = Game::startGame;
-	    FunctionThrowing<ConsoleWriterToFile, WriterToFile> consoleWriterToFileWrite = ConsoleWriterToFile::write;
-	    ContextHelper contextHelper = new ContextHelper(fileNameOutput);
+//	    FunctionThrowing<ConsoleWriterToFile, WriterToFile> consoleWriterToFileWrite = ConsoleWriterToFile::write;
+//	    ContextHelper contextHelper = new ContextHelper(fileNameOutput);
 	    // List<LineInfo> list =
-	    new FileReader(fileNameInput) //
+	   Optional<Context> context = new FileReader(fileNameInput) //
 		    .getStream() //
 		    .map(LineChecker::new) //
 		    .map(LineChecker::parseForLineType) //
 		    .map(LineParser::parseLineToInfo) //
 		    // .collect(Collectors.toList());
-		    .forEach(contextHelper::applyLineInfo);
-	    Optional.of(contextHelper.toInstance()).map(Game::new).map(gameStartGame) //
-		    .map(ConsoleWriterToFile::new) //
-		    .map(ConsoleWriterToFile::prepareFile) //
-		    .map(consoleWriterToFileWrite);
+		    .collect(new LineInfoCollector());
+//		    .forEach(contextHelper::applyLineInfo);
+		    context.map(Game::new).map(gameStartGame);
+//		    .map(ConsoleWriterToFile::new) //
+//		    .map(ConsoleWriterToFile::prepareFile) //
+//		    .map(consoleWriterToFileWrite);
 
 	    // new Game(context).startGame();
-	    // new ConsoleWriterToFile(context) //
-	    // .prepareFile() //
-	    // .write();
+	     new ConsoleWriterToFile(context) //
+	     .setFileName(fileNameOutput) //
+	     .prepareFile() //
+	     .write();
 	} catch (RuntimeException | IOException e) {
 	    try {
 		// if (fileNameOutput == null) {

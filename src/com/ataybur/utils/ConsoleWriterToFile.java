@@ -17,8 +17,6 @@ public class ConsoleWriterToFile extends WriterToFile {
     public ConsoleWriterToFile prepareFile() {
 	this.messages = context.map(Context::getConsole) //
 		.orElse(new ArrayList<String>());
-	this.fileName = context.map(Context::getOutputFileName) //
-		.orElse("output-file.txt");
 	return this;
     }
 
